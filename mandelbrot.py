@@ -80,3 +80,9 @@ class Mandelbrot:
     def update_range(self):
         self.range_x = (self.center[0] - self.zoom / 2, self.center[0] + self.zoom / 2)
         self.range_y = (self.center[1] - self.zoom / 2, self.center[1] + self.zoom / 2)
+
+    def set_resolution(self, res):
+        self.res = res
+        self.ROW = self.height // self.res
+        self.COL = self.width // self.res
+        self.escape_values = np.zeros((self.ROW, self.COL), dtype=np.uint8)

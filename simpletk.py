@@ -35,7 +35,7 @@ class Window:
         return tk.PhotoImage(width=width, height=height, file=file, data=data)
 
     def add_slider(self, start, end, value, row, col, length=100, variable=None, command=None, orientation="horizontal", row_span=1, col_span=1):
-        slider = ttk.Scale(self.root, from_=start, to=end, variable=variable, orient=orientation, command=command, length=length)
+        slider = ttk.Scale(self.root, from_=start, to=end, variable=variable, value=value, orient=orientation, command=command, length=length)
         slider.grid(row=row, column=col, rowspan=row_span, columnspan=col_span)
 
         return slider

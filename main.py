@@ -8,6 +8,11 @@ canvas = root.add_canvas(width=height, height=height, row=0, col=0, row_span=50)
 mandelbrot = Mandelbrot(height, height, res=4)
 scale = 0.6
 
+def set_res(event):
+    new_res = int(resolution_slider.get())
+    mandelbrot.set_resolution(new_res)
+    display_resolution["text"] = new_res
+
 def zoom_in(event):
     zoom(event, scale)
 
@@ -41,5 +46,11 @@ canvas.bind_all("<w>", lambda event: translate(0, -0.1))
 canvas.bind_all("<a>", lambda event: translate(-0.1, 0))
 canvas.bind_all("<s>", lambda event: translate(0, 0.1))
 canvas.bind_all("<d>", lambda event: translate(0.1, 0))
+
+resolution_label = root.add_label(text="Resolution: ", row=0, col=50)
+resolution_slider = root.add_slider(start=1, end=10, value=mandelbrot.res, length=150, row=0, col=51, command=set_res)
+display_resolution = root.add_label(text=mandelbrot.res, row=0, col=52)
+
+update = root.add_button(width=10, height=1, text="Update Screen", command=set_image, row=49, col=50)
 
 root.mainloop()
