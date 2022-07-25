@@ -1,77 +1,45 @@
+from mandelbrot import Mandelbrot
 from simpletk import Window
-from PIL import Image, ImageTk
-import numpy as np
-import math
-import random
 
-res = 4
 width, height = 1200, 800
-ROW, COL = height // res, height // res
-zoom, center = 2, (-0.5, 0)
-range_x, range_y = (center[0] - zoom//2, center[0] + zoom//2), (center[1] - zoom//2, center[1] + zoom//2)
 
 root = Window(width, height, "Exploring the Mandelbrot Set")
-canvas = root.add_canvas(height, height, 0, 0)
+canvas = root.add_canvas(width=height, height=height, row=0, col=0, row_span=50)
+mandelbrot = Mandelbrot(height, height, res=4)
+scale = 0.6
 
-display = np.zeros((ROW, COL), dtype=np.uint8)
-canvas_display = np.zeros((height, height, 3), dtype=np.uint8)
-image = ImageTk.PhotoImage(image=Image.fromarray(canvas_display))
+def zoom_in(event):
+    zoom(event, scale)
 
-def map_range(num, num_lower, num_higher, new_lower, new_higher):
-    return (num - num_lower) * (new_higher - new_lower) / (num_higher - num_lower) + new_lower
+def zoom_out(event):
+    zoom(event, 1 + scale)
 
-def translate_display(event):
-    global zoom, center, range_x, range_y
+def zoom(event, scalefactor):
+    mandelbrot.translate_display(event.x, event.y)
+    mandelbrot.set_zoom(mandelbrot.zoom * scalefactor)
+    set_image()
 
-    x = map_range(event.x, 0, height, range_x[0], range_x[1])
-    y = map_range(event.y, 0, height, range_y[0], range_y[1])
+def translate(dx, dy):
+    x, y = mandelbrot.center
+    zoom = mandelbrot.zoom
+    mandelbrot.center = (x + zoom*dx, y + zoom*dy)
+    mandelbrot.update_range()
+    set_image()
 
-    center = (x, y)
-    range_x, range_y = (center[0] - zoom // 2, center[0] + zoom // 2), (center[1] - zoom // 2, center[1] + zoom // 2)
-
-    _display = calculate_escape_values(display)
-    image = colorize_display(_display)
-    # _image = ImageTk.getimage(image)
-    # _image.save("screenshot.png")
-
-def f(Z, C):
-    return Z**2 + C
-
-def calc_f(row_col_elem):
-    (row, col), elem = row_col_elem
-    C_real = map_range(col, 0, COL - 1, range_x[0], range_x[1])
-    C_imag = map_range(row, 0, ROW - 1, range_y[0], range_y[1])
-    Z, C = complex(0, 0), complex(C_real, C_imag)
-    infinity = 10
-
-    escape_value = f(Z, C)
-    for iteration in range(200):
-        escape_value = f(escape_value, C)
-
-        if abs(escape_value) > infinity:
-            return iteration
-
-    return 200
-
-def calculate_escape_values(display):
-    return np.reshape(list(map(calc_f, np.ndenumerate(display))), (ROW, COL))
-
-def colorize_display(display):
-    global image, canvas_display
-
-    for j, row in enumerate(display):
-        for i, col in enumerate(row):
-            escape_value = display[j][i]
-            color = np.array([escape_value, escape_value, escape_value], dtype=np.uint8)
-            for k in range(res):
-                canvas_display[j*res + k][i*res:(i + 1)*res] = color
-
-    image = ImageTk.PhotoImage(image=Image.fromarray(canvas_display))
+def set_image():
+    mandelbrot.calculate_escape_values()
+    image = mandelbrot.colorize_display()
     canvas.delete("all")
-    canvas.create_image(height // 2, height // 2, image=image)
+    canvas.create_image(mandelbrot.width // 2, mandelbrot.height // 2, image=image)
 
-display = calculate_escape_values(display)
-colorize_display(display)
+set_image()
 
-canvas.bind("<Button>", translate_display)
+canvas.bind("<Button-1>", zoom_in)
+canvas.bind("<Button-2>", zoom_out)
+
+canvas.bind_all("<w>", lambda event: translate(0, -0.1))
+canvas.bind_all("<a>", lambda event: translate(-0.1, 0))
+canvas.bind_all("<s>", lambda event: translate(0, 0.1))
+canvas.bind_all("<d>", lambda event: translate(0.1, 0))
+
 root.mainloop()

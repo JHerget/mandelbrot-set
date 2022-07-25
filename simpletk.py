@@ -1,3 +1,4 @@
+from tkinter import ttk
 import tkinter as tk
 
 class Window:
@@ -32,3 +33,9 @@ class Window:
 
     def image(self, width=None, height=None, file=None, data=None):
         return tk.PhotoImage(width=width, height=height, file=file, data=data)
+
+    def add_slider(self, start, end, value, row, col, length=100, variable=None, command=None, orientation="horizontal", row_span=1, col_span=1):
+        slider = ttk.Scale(self.root, from_=start, to=end, variable=variable, orient=orientation, command=command, length=length)
+        slider.grid(row=row, column=col, rowspan=row_span, columnspan=col_span)
+
+        return slider
