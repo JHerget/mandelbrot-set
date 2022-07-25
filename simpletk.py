@@ -11,6 +11,9 @@ class Window:
     def mainloop(self):
         self.root.mainloop()
 
+    def update(self):
+        self.root.update()
+
     def add_canvas(self, width, height, row, col, row_span=1, col_span=1, background=None):
         label = tk.Label(self.root)
         label.grid(row=row, column=col, rowspan=row_span, columnspan=col_span)
@@ -25,8 +28,8 @@ class Window:
 
         return button
 
-    def add_label(self, row, col, text=None, image=None, row_span=1, col_span=1):
-        label = tk.Label(self.root, text=text)
+    def add_label(self, row, col, text=None, image=None, text_variable=None, row_span=1, col_span=1):
+        label = tk.Label(self.root, text=text, textvariable=text_variable)
         label.grid(row=row, column=col, rowspan=row_span, columnspan=col_span)
 
         return label

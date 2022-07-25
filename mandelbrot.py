@@ -32,6 +32,9 @@ class Mandelbrot:
         return Z ** 2 + C
 
     def calc_f(self, row_col_elem):
+        self.status += 1 / (self.ROW * self.COL)
+        print(f"Screen status: {round(self.status * 100, 2)}%")
+
         (row, col), elem = row_col_elem
         C_real = Mandelbrot.map_range(col, 0, self.COL - 1, self.range_x[0], self.range_x[1])
         C_imag = Mandelbrot.map_range(row, 0, self.ROW - 1, self.range_y[0], self.range_y[1])
@@ -48,6 +51,7 @@ class Mandelbrot:
         return -1
 
     def calculate_escape_values(self):
+        self.status = 0
         self.escape_values = np.reshape(list(map(self.calc_f, np.ndenumerate(self.escape_values))), (self.ROW, self.COL))
 
     def translate_display(self, x, y):

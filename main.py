@@ -1,5 +1,6 @@
 from mandelbrot import Mandelbrot
 from simpletk import Window
+import datetime as dt
 
 width, height = 1200, 800
 
@@ -7,6 +8,11 @@ root = Window(width, height, "Exploring the Mandelbrot Set")
 canvas = root.add_canvas(width=height, height=height, row=0, col=0, row_span=50)
 mandelbrot = Mandelbrot(height, height, res=4)
 scale = 0.6
+
+def set_iterations(event):
+    new_max = int(iterations_slider.get())
+    mandelbrot.max_iterations = new_max
+    display_iterations["text"] = new_max
 
 def set_res(event):
     new_res = int(resolution_slider.get())
@@ -36,6 +42,7 @@ def set_image():
     image = mandelbrot.colorize_display()
     canvas.delete("all")
     canvas.create_image(mandelbrot.width // 2, mandelbrot.height // 2, image=image)
+    print(f"Image set {dt.datetime.now()}")
 
 set_image()
 
@@ -51,6 +58,10 @@ resolution_label = root.add_label(text="Resolution: ", row=0, col=50)
 resolution_slider = root.add_slider(start=1, end=10, value=mandelbrot.res, length=150, row=0, col=51, command=set_res)
 display_resolution = root.add_label(text=mandelbrot.res, row=0, col=52)
 
-update = root.add_button(width=10, height=1, text="Update Screen", command=set_image, row=49, col=50)
+iterations_label = root.add_label(text="Max iterations: ", row=1, col=50)
+iterations_slider = root.add_slider(start=1, end=2000, value=mandelbrot.max_iterations, length=150, row=1, col=51, command=set_iterations)
+display_iterations = root.add_label(text=mandelbrot.max_iterations, row=1, col=52)
+
+update_screen_button = root.add_button(width=10, height=1, text="Update Screen", command=set_image, row=49, col=50)
 
 root.mainloop()
