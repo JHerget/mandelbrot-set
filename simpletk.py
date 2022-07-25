@@ -39,3 +39,9 @@ class Window:
         slider.grid(row=row, column=col, rowspan=row_span, columnspan=col_span)
 
         return slider
+
+    def add_entry(self, row, col, row_span=1, col_span=1, width=50, validate=None, validate_command=None, invalid_command=None, background=None, command=None, variable=None, show=None):
+        entry = tk.Entry(background=background, command=command, textvariable=variable, width=width, show=show, validate=validate, validatecommand=validate_command, invalidcommand=invalid_command)
+        entry.grid(row=row, column=col, rowspan=row_span, columnspan=col_span)
+
+        return entry
